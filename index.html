@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thaysson Turismo AL | Transfer e Passeios em Maceió</title>
+    
+    <meta name="description" content="Passeios privativos e transfer premium em Maceió com guia credenciado CADASTUR. Conforto e exclusividade em Alagoas.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* CORES EXTRAÍDAS DA FARDA/LOGO */
+            --bg-dark: #022c33; /* Azul Petróleo Profundo (Cor da Farda) */
+            --brand-teal: #008491; /* Teal da Logo */
+            --brand-teal-light: #00ced1;
+            --brand-gradient: linear-gradient(135deg, #008491 0%, #004b57 100%);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #FFFFFF;
+            --text-dim: #b0c4c7;
+            --transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; scroll-behavior: smooth; }
+        body { background-color: var(--bg-dark); color: var(--text-main); line-height: 1.6; overflow-x: hidden; }
+
+        /* --- LOADER --- */
+        #loader { position: fixed; inset: 0; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.6s ease; }
+        .spinner { width: 45px; height: 45px; border: 3px solid var(--glass-border); border-top: 3px solid var(--brand-teal-light); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- LIGHTBOX --- */
+        #lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; cursor: zoom-out; }
+        #lightbox img { max-width: 95%; max-height: 85vh; border-radius: 12px; border: 2px solid var(--brand-teal); box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+
+        /* --- NAVIGATION --- */
+        header { position: fixed; top: 0; width: 100%; z-index: 1000; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(2, 44, 51, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-bottom: 1px solid var(--glass-border); }
+        .nav-logo { height: 50px; cursor: pointer; }
+        nav ul { display: flex; list-style: none; gap: 25px; }
+        nav ul li a { text-decoration: none; color: var(--text-main); font-size: 0.9rem; font-weight: 500; transition: var(--transition); opacity: 0.8; }
+        nav ul li a:hover { color: var(--brand-teal-light); opacity: 1; }
+
+        /* --- HERO --- */
+        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; background: linear-gradient(to top, var(--bg-dark) 0%, rgba(2, 44, 51, 0.6) 40%, transparent 100%), url('img01.webp') center/cover no-repeat; }
+        .hero h1 { font-size: clamp(2.4rem, 8vw, 4rem); font-weight: 800; line-height: 1.1; margin-bottom: 200px; letter-spacing: -2px; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .badge { background: var(--brand-teal); padding: 6px 18px; border-radius: 50px; font-size: 0.7rem; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+
+        /* --- LAYOUT UTILS --- */
+        .section-padding { padding: 100px 20px; max-width: 1200px; margin: 0 auto; }
+        .section-title { text-align: center; font-size: 2.5rem; margin-bottom: 60px; font-weight: 800; color: var(--brand-teal-light); }
+        .glass { background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 28px; transition: var(--transition); }
+        .glass:hover { border-color: var(--brand-teal); transform: translateY(-5px); }
+
+        .btn-primary { background: var(--brand-gradient); color: white; padding: 16px 35px; border-radius: 50px; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 12px; transition: var(--transition); border: none; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0, 132, 145, 0.4); }
+
+        /* --- CARDS --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .card-img { height: 260px; overflow: hidden; border-radius: 24px 24px 0 0; }
+        .card-img img { width: 100%; height: 100%; object-fit: cover; transition: 0.8s; cursor: pointer; }
+        .card:hover .card-img img { transform: scale(1.1); }
+        .card-body { padding: 30px; text-align: center; }
+
+        /* --- GALERIA CLIENTES --- */
+        .scroll-container { display: flex; gap: 20px; overflow-x: auto; padding: 20px 0 40px; scrollbar-width: none; cursor: grab; }
+        .scroll-container::-webkit-scrollbar { display: none; }
+        .photo-card { min-width: 280px; height: 400px; border-radius: 22px; object-fit: cover; cursor: pointer; border: 2px solid transparent; transition: var(--transition); }
+        .photo-card:hover { border-color: var(--brand-teal-light); transform: scale(1.03); }
+
+        /* --- WHATSAPP --- */
+        .wa-float { position: fixed; bottom: 30px; right: 30px; background: #25D366; width: 65px; height: 65px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 34px; z-index: 1500; box-shadow: 0 10px 30px rgba(0,0,0,0.4); transition: 0.3s; }
+        .wa-float:hover { transform: scale(1.1) rotate(10deg); }
+
+        /* --- ANIMATIONS --- */
+        .reveal { opacity: 0; transform: translateY(40px); transition: 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 768px) {
+            header { padding: 12px 20px; }
+            nav ul { display: none; }
+            .section-padding { padding: 70px 20px; }
+            .section-title { font-size: 2rem; }
+            .wa-float { width: 55px; height: 55px; font-size: 28px; bottom: 20px; right: 20px; }
+        }
+    
+    /* CSS PARA O CARROSSEL INFINITO */
+.combo-container {
+    width: 109%;
+    overflow: hidden;
+    padding: 30px 0;
+    cursor: grab;
+    position: relative;
+}
+
+.combo-track {
+    display: flex;
+    gap: 20px;
+    width: max-content;
+    /* Ajuste o tempo (30s) para mudar a velocidade do movimento */
+    animation: scrollCombos 30s linear infinite;
+}
+
+/* Pausa o movimento quando o utilizador passa o rato ou clica */
+.combo-track:hover {
+    animation-play-state: paused;
+}
+
+.combo-card {
+    background: rgba(255, 255, 255, 0.05); /* Efeito de vidro */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    width: 280px;
+    overflow: hidden;
+    transition: 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    flex-shrink: 0;
+    position: relative;
+}
+
+.combo-card:hover {
+    border-color: #00ced1; /* Teal da logo */
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+}
+
+.combo-card img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+}
+
+.combo-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: #00ced1;
+    color: #022c33; /* Cor da farda */
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    z-index: 2;
+}
+
+.combo-info {
+    padding: 20px;
+    text-align: left;
+}
+
+.combo-info h4 {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    color: #FFFFFF;
+}
+
+.combo-info p {
+    font-size: 0.85rem;
+    color: #b0c4c7;
+    margin-bottom: 15px;
+}
+
+.combo-info .price {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #00ced1;
+    margin-bottom: 15px;
+}
+
+.btn-sm {
+    background: #FFFFFF;
+    color: #022c33;
+    padding: 12px;
+    border-radius: 14px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 700;
+    display: block;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.btn-sm:hover {
+    background: #00ced1;
+    color: #FFFFFF;
+}
+
+/* ANIMAÇÃO DO LOOP */
+@keyframes scrollCombos {
+    0% { transform: translateX(0); }
+    /* Desloca exatamente a largura de 3 cards + os gaps */
+    100% { transform: translateX(calc(-300px * 3)); } 
+}
+
+/* Ajustes para telemóveis */
+@media (max-width: 768px) {
+    .combo-card {
+        width: 250px;
+    }
+    @keyframes scrollCombos {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(calc(-270px * 3)); }
+    }
+}
+
+    .price {
+    display: inline-block;
+    padding: 1px 14px;
+    font-size: 1px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #00f5d4;
+
+    background: rgba(0, 245, 212, 0.08);
+    border: 1px solid rgba(0, 245, 212, 0.3);
+    border-radius: 50px;
+
+    backdrop-filter: blur(6px);
+
+    position: relative;
+    overflow: hidden;
+
+    transition: all 0.3s ease;
+}
+
+/* glow suave */
+.price:hover {
+    background: rgba(0, 245, 212, 0.15);
+    box-shadow: 0 0 12px rgba(0, 245, 212, 0.4);
+    transform: translateY(-2px);
+}
+
+/* linha animada discreta */
+.price::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 0%;
+    background: linear-gradient(90deg, transparent, #00f5d4, transparent);
+    transition: 0.4s;
+}
+
+.price:hover::after {
+    width: 100%;
+}
+     </style>
+</head>
+<body>
+
+    <div id="loader"><div class="spinner"></div></div>
+
+    <div id="lightbox" onclick="this.style.display='none'"><img src="" id="lightbox-img"></div>
+
+    <header>
+        <img src="img02.webp" alt="Thaysson Turismo AL" class="nav-logo" onclick="window.scrollTo(0,0)">
+        <nav>
+            <ul>
+                <li><a href="#home">Início</a></li>
+                <li><a href="#transfer">Transfer</a></li>
+                <li><a href="#passeios">Passeios</a></li>
+                <li><a href="#galeria">Clientes</a></li>
+            </ul>
+        </nav>
+        <a href="https://wa.me/5582996227192" class="btn-primary" style="padding: 10px 22px; font-size: 0.8rem;">RESERVAR AGORA</a>
+    </header>
+
+    <a href="https://wa.me/5582996227192" class="wa-float" target="_blank" title="Chamar no WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <section class="hero" id="home">
+        <div class="badge reveal">Guia Credenciado CADASTUR: 02.851910.41-1</div>
+        <h1 class="reveal">Explore Maceió com<br>Exclusividade e Conforto</h1>
+        <p class="reveal" style="max-width: 700px; color: var(--text-dim); margin-bottom: 40px; font-size: 1.1rem;">Traslados premium e roteiros personalizados com quem vive o paraíso alagoano todos os dias.</p>
+        <div class="reveal">
+            <a href="#transfer" class="btn-primary">AGENDAR MEU TRANSFER <i class="fas fa-arrow-right"></i></a>
+        </div>
+        
+<div class="combo-container">
+    <div class="combo-track">
+        <div class="combo-card">
+            <div class="combo-badge">Destaque</div>
+            <img src="maragogi.webp" alt="Combo maragogi">
+            <div class="combo-info">
+                <h4>Combo Maragogi</h4>
+                <p><i class="fas fa-bus"></i> Transfer + 3 Passeios</p>
+               <span class="price">20% OFF</span>
+                <a href="https://wa.me/5582996227192?text=Quero o Combo Âmbar" class="btn-sm">Selecionar</a>
+            </div>
+        </div>
+        <div class="combo-card">
+            <div class="combo-badge">Popular</div>
+            <img src="milagres.webp" alt="Combo Diamante">
+            <div class="combo-info">
+                <h4>Combo Diamante</h4>
+                <p><i class="fas fa-star"></i> VIP Milagres</p>
+                <span class="price">20% OFF</span>
+                <a href="https://wa.me/5582996227192?text=Quero o Combo Diamante" class="btn-sm">Selecionar</a>
+            </div>
+        </div>
+        <div class="combo-card">
+            <div class="combo-badge">Novo</div>
+            <img src="gunga.webp" alt="Combo Gunga">
+            <div class="combo-info">
+                <h4>Combo Gunga</h4>
+                <p><i class="fas fa-umbrella-beach"></i> Lazer Completo</p>
+                <span class="price">20% OFF</span>
+                <a href="https://wa.me/5582996227192?text=Quero o Combo Gunga" class="btn-sm">Selecionar</a>
+            </div>
+        </div>
+        
+        <div class="combo-card">
+            <div class="combo-badge">Destaque</div>
+            <img src="maragogi.webp" alt="Combo maragogi">
+            <div class="combo-info">
+                <h4>Combo Maragogi</h4>
+                <p><i class="fas fa-bus"></i> Transfer + 3 Passeios</p>
+              <span class="price">20% OFF</span>
+                <a href="https://wa.me/5582996227192?text=Quero o Combo Âmbar" class="btn-sm">Selecionar</a>
+            </div>
+        </div>
+        <div class="combo-card">
+            <div class="combo-badge">Popular</div>
+            <img src="milagres.webp" alt="Combo Diamante">
+            <div class="combo-info">
+                <h4>Combo Diamante</h4>
+                <p><i class="fas fa-star"></i> VIP Milagres</p>
+              <span class="price">20% OFF</span>
+                <a href="https://wa.me/5582996227192?text=Quero o Combo Diamante" class="btn-sm">Selecionar</a>
+            </div>
+        </div>
+        <div class="combo-card">
+            <div class="combo-badge">Novo</div>
+            <img src="gunga.webp" alt="Combo Gunga">
+            <div class="combo-info">
+                <h4>Combo Gunga</h4>
+                <p><i class="fas fa-umbrella-beach"></i> Lazer Completo</p>
+              <span class="price">20% OFF</span>
+                <a href="https://wa.me/5582996227192?text=Quero o Combo Gunga" class="btn-sm">Selecionar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+        
+    </section>
+
+    <section class="section-padding" id="transfer">
+        <h2 class="section-title reveal">Serviços de Transfer</h2>
+        <div class="grid">
+            <div class="glass reveal" style="padding: 40px; text-align: center;">
+                <i class="fas fa-plane-arrival" style="font-size: 3rem; color: var(--brand-teal-light); margin-bottom: 20px;"></i>
+                <h3 style="margin-bottom: 15px;">Aeroporto (MCZ)</h3>
+                <p style="color: var(--text-dim); margin-bottom: 25px;">Recepção personalizada no desembarque com placa de identificação e auxílio com bagagens.</p>
+                <a href="https://wa.me/5582996227192?text=Olá, quero agendar um transfer aeroporto" class="btn-primary" style="width: 100%; justify-content: center;">SOLICITAR</a>
+            </div>
+            <div class="glass reveal" style="padding: 40px; text-align: center;">
+                <i class="fas fa-map-marked-alt" style="font-size: 3rem; color: var(--brand-teal-light); margin-bottom: 20px;"></i>
+                <h3 style="margin-bottom: 15px;">Viagens Regionais</h3>
+                <p style="color: var(--text-dim); margin-bottom: 25px;">Transporte exclusivo para São Miguel dos Milagres, Maragogi, Japaratinga e estados vizinhos.</p>
+                <a href="https://wa.me/5582996227192?text=Olá, quero orçamento para viagem regional" class="btn-primary" style="width: 100%; justify-content: center;">SOLICITAR</a>
+            </div>
+            <div class="glass reveal" style="padding: 40px; text-align: center;">
+                <i class="fas fa-utensils" style="font-size: 3rem; color: var(--brand-teal-light); margin-bottom: 20px;"></i>
+                <h3 style="margin-bottom: 15px;">Jantares e Eventos</h3>
+                <p style="color: var(--text-dim); margin-bottom: 25px;">Tenha um motorista à disposição para levá-lo aos melhores restaurantes e eventos com total segurança.</p>
+                <a href="https://wa.me/5582996227192?text=Olá, preciso de transporte para jantar/evento" class="btn-primary" style="width: 100%; justify-content: center;">SOLICITAR</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding" id="passeios" style="background: rgba(0,0,0,0.15); border-radius: 50px;">
+        <h2 class="section-title reveal">Roteiros Imperdíveis</h2>
+        <div class="grid">
+            <div class="glass card reveal">
+                <div class="card-img"><img src="maragogi.webp" alt="Maragogi" onclick="openLightbox(this.src)"></div>
+                <div class="card-body">
+                    <h3 style="margin-bottom: 10px;">Maragogi</h3>
+                    <p style="color: var(--text-dim); margin-bottom: 20px;">O Caribe Brasileiro: Piscinas naturais de águas calmas e azul turquesa.</p>
+                    <a href="https://wa.me/5582996227192?text=Quero saber mais sobre Maragogi" class="btn-primary" style="padding: 10px 25px; font-size: 0.9rem;">SAIBA MAIS</a>
+                </div>
+            </div>
+            <div class="glass card reveal">
+                <div class="card-img"><img src="milagres01.webp" alt="São Miguel dos Milagres" onclick="openLightbox(this.src)"></div>
+                <div class="card-body">
+                    <h3 style="margin-bottom: 10px;">Rota Ecológica</h3>
+                    <p style="color: var(--text-dim); margin-bottom: 20px;">O charme rústico de Milagres e as praias mais preservadas do estado.</p>
+                    <a href="https://wa.me/5582996227192?text=Quero saber mais sobre Milagres" class="btn-primary" style="padding: 10px 25px; font-size: 0.9rem;">SAIBA MAIS</a>
+                </div>
+            </div>
+            <div class="glass card reveal">
+                <div class="card-img"><img src="gunga01.webp" alt="Praia do Gunga" onclick="openLightbox(this.src)"></div>
+                <div class="card-body">
+                    <h3 style="margin-bottom: 10px;">Praia do Gunga</h3>
+                    <p style="color: var(--text-dim); margin-bottom: 20px;">Falésias coloridas e o incrível encontro da lagoa com o mar.</p>
+                    <a href="https://wa.me/5582996227192?text=Quero saber mais sobre o Gunga" class="btn-primary" style="padding: 10px 25px; font-size: 0.9rem;">SAIBA MAIS</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding" id="galeria">
+        <h2 class="section-title reveal">Nossos Clientes no Paraíso</h2>
+        <p style="text-align: center; color: var(--text-dim); margin-top: -40px; margin-bottom: 30px; font-size: 0.9rem;">Clique para ampliar ou arraste para os lados →</p>
+        <div class="scroll-container reveal">
+            <img src="cliente2.webp" class="photo-card" alt="Cliente Thaysson Turismo" onclick="openLightbox(this.src)">
+            <img src="cliente3.webp" class="photo-card" alt="Cliente Thaysson Turismo" onclick="openLightbox(this.src)">
+            <img src="cliente1.webp" class="photo-card" alt="Cliente Thaysson Turismo" onclick="openLightbox(this.src)">
+            <img src="cliente4.webp" class="photo-card" alt="Cliente Thaysson Turismo" onclick="openLightbox(this.src)">
+            <img src="cliente5.webp" class="photo-card" alt="Cliente Thaysson Turismo" onclick="openLightbox(this.src)">
+            <img src="cliente6.webp" class="photo-card" alt="Cliente Thaysson Turismo" onclick="openLightbox(this.src)">
+        </div>
+    </section>
+
+    <footer style="padding: 80px 20px 40px; border-top: 1px solid var(--glass-border); background: rgba(0,0,0,0.2);">
+        <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 50px;">
+            <div>
+                <img src="img02.webp" alt="Thaysson Turismo AL" style="height: 55px; margin-bottom: 20px;">
+                <p style="color: var(--text-dim); font-size: 0.95rem;">Especialista em transporte receptivo e passeios privativos. Sua segurança em primeiro lugar.</p>
+            </div>
+            <div>
+                <h4 style="margin-bottom: 20px; color: var(--brand-teal-light);">Contato e Social</h4>
+                <p style="color: var(--text-dim); font-size: 0.9rem; line-height: 2;">
+                    <i class="fab fa-instagram"></i> @thayssonturismoal<br>
+                    <i class="fas fa-envelope"></i> thayssonaraujo7@gmail.com<br>
+                    <i class="fas fa-map-marker-alt"></i> Maceió - Alagoas
+                </p>
+            </div>
+            <div>
+                <h4 style="margin-bottom: 20px; color: var(--brand-teal-light);">Empresa</h4>
+                <p style="color: var(--text-dim); font-size: 0.9rem; line-height: 2;">
+                    <strong>CADASTUR: 02.851910.41-1</strong><br>
+                    Guia de Turismo Credenciado<br>
+                    Disponível 24 Horas
+                </p>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 70px; padding-top: 25px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.75rem; color: #5a7d82;">
+            &copy; 2026 Thaysson Turismo AL. Todos os direitos reservados. | Desenvolvido por Adriano Digital.
+        </div>
+    </footer>
+
+    <script>
+        // Loader Handler
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            loader.style.opacity = '0';
+            setTimeout(() => loader.style.display = 'none', 600);
+        });
+
+        // Lightbox Handler
+        function openLightbox(src) {
+            const lb = document.getElementById('lightbox');
+            const img = document.getElementById('lightbox-img');
+            img.src = src;
+            lb.style.display = 'flex';
+        }
+
+        // Intersection Observer para Animações
+        const observerOptions = { threshold: 0.15 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Carrossel de Fotos (Drag to Scroll)
+        const slider = document.querySelector('.scroll-container');
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        slider.addEventListener('mousedown', (e) => {
+            isDown = true;
+            startX = e.pageX - slider.offsetLeft;
+            scrollLeft = slider.scrollLeft;
+        });
+        slider.addEventListener('mouseleave', () => isDown = false);
+        slider.addEventListener('mouseup', () => isDown = false);
+        slider.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - slider.offsetLeft;
+            const walk = (x - startX) * 2.5;
+            slider.scrollLeft = scrollLeft - walk;
+        });
+    </script>
+</body>
+</html>
